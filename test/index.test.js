@@ -15,12 +15,12 @@ const cliArguments = ['some/path', 'another/path', '-f', 'template.yaml'];
 describe('CLI', function() {
   describe('main()', function() {
     before(() => {         
-      chai.use(spies);  
-      console.log = chai.spy;
+      chai.use(spies);        
       process.cwd = chai.spy.returns('/testPath');       
     });
 
     beforeEach(() => {
+      console.log = chai.spy.returns((str) => {});
       jsYamlSpy.safeLoad = chai.spy.returns({entity: 'Person'})  
       childProcessSpy.exec = chai.spy.returns((input, callback) => {});
       minimistSpy = chai.spy.returns({f: 'template.yaml'});
@@ -79,7 +79,7 @@ describe('CLI', function() {
       expect(chalkSpy).to.have.been.called;     
     });
 
-    it('should generate a new component given a valid template file', function() {      
+    it('should try to generate a new component given a valid template file', function() {      
       cli.main(cliArguments);            
       expect(childProcessSpy.exec).to.have.been.called.with('ng generate component Person');     
     });
