@@ -12,14 +12,7 @@ module.exports.main = function (args) {
     const configuration = yaml.safeLoad(yamlFileContent);     
     console.log(configuration);
 
-    exec('ng generate component ' + configuration.entity, (error, stdout, stderr) => {          
-      if(error){
-        console.log('Error while creating entity ' + configuration.entity + ': ', stderr);
-        return;    
-      } else {
-        console.log("Angular component created!");
-      }
-    });
+    exec('ng generate component ' + configuration.entity, require('./handler/ngGenerateCallbackHandler'));
   } else {
     console.log(chalk.red('Template file is missing, please use the -f argument.'));
   }
