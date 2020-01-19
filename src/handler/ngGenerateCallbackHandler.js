@@ -13,6 +13,8 @@ NgGenerateCallBackHandler.prototype.handle = function handle(error, stdout, stde
   
   console.log('Angular component created!');  
   
+  console.log(this.configuration);
+
   codeGenerationComponent.generateHTML(this.configuration);
 }
 

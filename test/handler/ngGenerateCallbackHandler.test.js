@@ -1,7 +1,6 @@
 const chai = require('chai');
 const spies = require('chai-spies');
 const expect = chai.expect;
-const handler = require('../../src/handler/ngGenerateCallbackHandler');
 const proxyquire = require('proxyquire');
 
 var codeGenerationComponentMock = {};
