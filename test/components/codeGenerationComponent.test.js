@@ -17,6 +17,7 @@ describe('codeGenerationComponent', () => {
       
       fsSpy.readFileSync = chai.spy();
       fsSpy.appendFileSync = chai.spy();
+      fsSpy.writeFileSync = chai.spy();
       
       component = proxyquire('../../src/components/codeGenerationComponent',{
         'fs': fsSpy,
@@ -25,6 +26,15 @@ describe('codeGenerationComponent', () => {
     });
 
     it('should cleanup the content of the component html file', () => {
+      var mockComponentHMTLFilePath = '/src/app/person/person.component.html';
+      
+      var mockConfiguration = {
+        entity: "Person"
+      };  
+
+      component.generateHTML(mockConfiguration);  
+
+      expect(fsSpy.writeFileSync).to.have.been.called.with(process.cwd() + mockComponentHMTLFilePath, '');
 
     });
 
@@ -34,7 +44,7 @@ describe('codeGenerationComponent', () => {
 
       var mockConfiguration = {
         entity: "Person"
-      }                
+      };              
 
       component.generateHTML(mockConfiguration);      
 

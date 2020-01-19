@@ -8,5 +8,7 @@ module.exports.generateHTML = (configuration) => {
   const componentHTMLFilePath = process.cwd() + '/src/app/' + entityName + '/' + entityName + '.component.html';  
   
   var formStartContent = fs.readFileSync(formStartTemplateFilePath);
-  fs.appendFileSync(componentHTMLFilePath, formStartContent);
+
+  fs.writeFileSync(componentHTMLFilePath, '');
+  fs.appendFileSync(componentHTMLFilePath, formStartContent);    
 };
