@@ -15,6 +15,7 @@ describe('ngGenerateCallbackHandler', () => {
     beforeEach(() => {
       console.log = chai.spy.returns((str) => {});
       codeGenerationComponentMock.generateHTML = chai.spy.returns((configuration) => {});   
+      codeGenerationComponentMock.generateModel = chai.spy.returns((configuration) => {});   
       
       NgGenerateCallBackHandler = proxyquire('../../src/handler/ngGenerateCallbackHandler', {
         '../components/codeGenerationComponent': codeGenerationComponentMock
@@ -47,6 +48,15 @@ describe('ngGenerateCallbackHandler', () => {
       callbackHandler.handle(null, null, null);
 
       expect(codeGenerationComponentMock.generateHTML).to.have.been.called.with(mockConfiguration);
+    });
+
+    it('should delegate model code generation to codeGenerationComponent given no errors occured', () => {
+      var mockConfiguration = {thisIsA: 'Mock'};
+      var callbackHandler = new NgGenerateCallBackHandler(mockConfiguration, null);
+
+      callbackHandler.handle(null, null, null);
+
+      expect(codeGenerationComponentMock.generateModel).to.have.been.called.with(mockConfiguration);
     });
   });
 });

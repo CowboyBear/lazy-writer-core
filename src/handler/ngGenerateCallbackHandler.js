@@ -16,6 +16,8 @@ NgGenerateCallBackHandler.prototype.handle = function handle(error, stdout, stde
   console.log(this.configuration);
 
   codeGenerationComponent.generateHTML(this.configuration);
+
+  codeGenerationComponent.generateModel(this.configuration);
 }
 
 module.exports = NgGenerateCallBackHandler;
