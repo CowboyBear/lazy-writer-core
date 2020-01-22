@@ -27,10 +27,12 @@ describe('codeGenerationComponent', () => {
       };            
     });
 
-    beforeEach(() => {              
-      fsSpy.readFileSync = chai.spy();
+    beforeEach(() => {                    
+      const mockHTMLTemplate = '<p> this is an html template </p> <input type="text"/>';
+      
       fsSpy.appendFileSync = chai.spy();
       fsSpy.writeFileSync = chai.spy();
+      fsSpy.readFileSync = chai.spy.returns(mockHTMLTemplate);
       
       component = proxyquire('../../src/components/codeGenerationComponent',{
         'fs': fsSpy,
@@ -56,14 +58,43 @@ describe('codeGenerationComponent', () => {
 
     it('should create a text field (text-input.html template) for every string field', () => {      
       var mockTemplateFilePath = dirnameWrapperMock + '/../assets/templates/html/text-input.html';
-      const mockHTMLTemplate = "<input type=\"text\"/>";
+      const mockHTMLTemplate = '<input type="text"/>';
+
       fsSpy.readFileSync = chai.spy.returns(mockHTMLTemplate);
  
       component.generateHTML(mockConfiguration);  
 
       expect(fsSpy.readFileSync).to.have.been.called.with(mockTemplateFilePath);
       expect(fsSpy.appendFileSync).to.have.been.second.called.with(mockComponentHTMLFilePath, mockHTMLTemplate);
-      expect(fsSpy.appendFileSync).to.have.been.third.called.with(mockComponentHTMLFilePath, mockHTMLTemplate);
+      expect(fsSpy.appendFileSync).to.have.been.third.called.with(mockComponentHTMLFilePath, mockHTMLTemplate);      
+    });
+
+    it('should replace the FIELD_DISPLAY_NAME constant within the template file for text fields with the fields name', () => {      
+      const mockHTMLTemplate = new String('FIELD_DISPLAY_NAME <input type=\"text\"/>');
+      mockHTMLTemplate.toString = chai.spy.returns(mockHTMLTemplate);
+      mockHTMLTemplate.replace = chai.spy.returns(new String(''));
+
+      fsSpy.readFileSync = chai.spy.returns(mockHTMLTemplate);
+ 
+      component.generateHTML(mockConfiguration);  
+      
+      expect(mockHTMLTemplate.replace).to.have.been.called.with(/FIELD_DISPLAY_NAME/, mockConfiguration.fields[0].name);
+      expect(mockHTMLTemplate.replace).to.have.been.called.with(/FIELD_DISPLAY_NAME/, mockConfiguration.fields[1].name);
+      expect(mockHTMLTemplate.replace).to.not.have.been.called.with(/FIELD_DISPLAY_NAME/, mockConfiguration.fields[2].name);      
+    });
+
+    it('should replace the FIELD_NAME constant within the template file for text fields with the fields name', () => {      
+      const mockHTMLTemplate = new String('FIELD_NAME <input type=\"text\"/>');
+      mockHTMLTemplate.toString = chai.spy.returns(mockHTMLTemplate);
+      mockHTMLTemplate.replace = chai.spy.returns(mockHTMLTemplate);
+
+      fsSpy.readFileSync = chai.spy.returns(mockHTMLTemplate);
+ 
+      component.generateHTML(mockConfiguration);  
+      
+      expect(mockHTMLTemplate.replace).to.have.been.called.with(/FIELD_NAME/, mockConfiguration.fields[0].name);
+      expect(mockHTMLTemplate.replace).to.have.been.called.with(/FIELD_NAME/, mockConfiguration.fields[1].name);
+      expect(mockHTMLTemplate.replace).to.not.have.been.called.with(/FIELD_NAME/, mockConfiguration.fields[2].name);      
     });
 
     it('should close the form (form-end.html template) after all fields are created', () => {            
@@ -73,6 +104,6 @@ describe('codeGenerationComponent', () => {
 
       expect(fsSpy.readFileSync).to.have.been.called.with(mockTemplateFilePath);
       expect(fsSpy.appendFileSync).to.have.been.called.with(mockComponentHTMLFilePath);
-    });
+    });    
   });
 });

@@ -21,9 +21,13 @@ function initForm(filePath){
   fs.appendFileSync(filePath, getTemplateContent('html', 'form-start.html'));    
 }
 
-function createTextFields(fields, filePath) {    
+function createTextFields(fields, filePath) { 
+  var template = getTemplateContent('html', 'text-input.html')
+  
   fields.forEach((field) => {
-    fs.appendFileSync(filePath, getTemplateContent('html', 'text-input.html'));
+    var textFieldHTML = template.toString().replace(/FIELD_DISPLAY_NAME/, field.name);
+    textFieldHTML = textFieldHTML.replace(/FIELD_NAME/, field.name);
+    fs.appendFileSync(filePath, textFieldHTML);
   });
 }
 
