@@ -46,27 +46,39 @@ module.exports.generateModel = (configuration) => {
   const entityName = formatEntityName(configuration['entity']);
   const fileName = entityName + ".ts";
   const modelFilePath  = modelFolderPath + '/' + fileName;
-  const modelPropertyTemplate = getTemplateContent('ts', 'model-property.ts').toString();
   
-  if(!fs.existsSync(modelFolderPath)) {
-    fs.mkdirSync(modelFolderPath);
-  }
+  createModelDirectory(modelFolderPath);
 
-  fs.writeFileSync(modelFilePath, '');
+  cleanupFile(modelFilePath);
 
-  var tsFileContent = 'export class ' + entityName + ' {\n\n';  
+  fs.writeFileSync(modelFilePath, createModelFileContent(entityName, configuration));  
+};
+
+function createModelFileContent(entityName, configuration) {
+  const modelPropertyTemplate = getTemplateContent('ts', 'model-property.ts').toString();
+
+  var tsFileContent = 'export class ' + entityName + ' {\n\n';
 
   configuration['fields'].forEach((field) => {
     var propertyContent = modelPropertyTemplate.replace(/FIELD_NAME/g, field.name);
     propertyContent = propertyContent.replace(/FIELD_TYPE/g, field.type);
-
     tsFileContent += propertyContent;
-  }); 
+  });
 
-  tsFileContent += '}'
+  tsFileContent += '}';
+  
+  return tsFileContent;
+}
 
-  fs.writeFileSync(modelFilePath, tsFileContent);  
-};
+function cleanupFile(modelFilePath) {
+  fs.writeFileSync(modelFilePath, '');
+}
+
+function createModelDirectory(modelFolderPath) {
+  if (!fs.existsSync(modelFolderPath)) {
+    fs.mkdirSync(modelFolderPath);
+  }
+}
 
 function formatEntityName(entityName) {
   return entityName
